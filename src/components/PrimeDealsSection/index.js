@@ -5,9 +5,16 @@ import Loader from 'react-loader-spinner';
 import ProductCard from '../ProductCard';
 import './index.css';
 
+const apiStatusConstants = {
+	initital: 'INITIAL',
+	success: 'SUCCESS',
+	failure: 'FAILURE',
+	loading: 'LOADING',
+};
 class PrimeDealsSection extends Component {
 	state = {
 		primeDeals: [],
+		apiStatus: apiStatusConstants.initital,
 	};
 
 	componentDidMount() {
@@ -15,6 +22,7 @@ class PrimeDealsSection extends Component {
 	}
 
 	getPrimeDeals = async () => {
+		this.setState({ apiStatus: apiStatusConstants.loading });
 		const jwtToken = Cookies.get('jwt_token');
 
 		const apiUrl = 'https://apis.ccbp.in/prime-deals';
@@ -37,7 +45,10 @@ class PrimeDealsSection extends Component {
 			}));
 			this.setState({
 				primeDeals: updatedData,
+				apiStatus: apiStatusConstants.success,
 			});
+		} else if (response.status === 401) {
+			this.setState({ apiStatus: apiStatusConstants.failure });
 		}
 	};
 
@@ -78,7 +89,18 @@ class PrimeDealsSection extends Component {
 	);
 
 	render() {
-		return this.renderPrimeDealsList();
+		const { apiStatus } = this.state;
+		// return this.renderPrimeDealsList();
+		switch (apiStatus) {
+			case apiStatusConstants.success:
+				return this.renderPrimeDealsList();
+			case apiStatusConstants.failure:
+				return this.renderPrimeDealsFailureView();
+			case apiStatusConstants.loading:
+				return this.renderLoadingView();
+			default:
+				return null;
+		}
 	}
 }
 
