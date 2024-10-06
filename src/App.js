@@ -6,6 +6,7 @@ import Cart from './components/Cart';
 import NotFound from './components/NotFound';
 import ProtectedRoute from './components/ProtectedRoute';
 import './App.css';
+import ProductItemDetails from './components/ProductItemDetails';
 
 const App = () => (
 	<BrowserRouter>
@@ -29,6 +30,11 @@ const App = () => (
 				exact
 				path="/cart"
 				component={Cart}
+			/>
+			<ProtectedRoute
+				exact
+				path="/products/:id"
+				component={ProductItemDetails}
 			/>
 			<Route
 				path="/not-found"
